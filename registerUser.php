@@ -1,46 +1,34 @@
-<?php
-if($_SERVER['REQUEST_METHOD']=='POST'){
-require 'dbconnect.php';
-regUser();
-}
+<?php 
 
-function regUser()
+include "base.php";
+
+if(!empty($_POST['FirstName']) && !empty($_POST['LastName'] && !empty($_POST['Username']) && !empty($_POST['Password']))
 {
-	global $connect;
-	$firstname = $_POST["firstname"];
-	$lastname = $_POST["lastname"];
-	$username = $_POST["username"];
-	$password = $_POST["password"];
-  $response = array();
-	
-	if($firstname == '' || $lastname == '' || $username == '' || $password == '')
-  {
-		echo 'please fill all values';
-	}
-	else
-	{
-		$sql = "SELECT * FROM Users WHERE username='$username'";
-		$check = mysqli_fetch_array(mysqli_query($connect,$sql));
-		if(isset($check))
-		{
-			echo 'username already exist';
-		}
-		else
-		{				
-			$sql = " INSERT into Users(firstname,lastname,username,password) values ('$firstname','$lastname','$username','$password');";
-			if(mysqli_query($connect,$sql))
-			{
-			        $response["success"] = true;
-			        echo 'Successfully Registered';
-			}
-			else
-			{
-			  $response["success"] = false;
-				echo 'oops! Please try again!';
-			}
-		}
-		mysqli_close($connect);
-	}
+    $fname = mysql_real_escape_string($_POST['FirstName']);
+    $lanem = mysql_real_escape_string($_POST['LastName']);
+    $username = mysql_real_escape_string($_POST['Username']);
+    $password = md5(mysql_real_escape_string($_POST['Password']));
+     
+     $checkusername = mysql_query("SELECT * FROM Users WHERE Username = '".$username."'");
+      
+     if(mysql_num_rows($checkusername) == 1)
+     {
+        echo "<h1>Error</h1>";
+        echo "<p>Sorry, that username is taken. Please go back and try again.</p>";
+     }
+     else
+     {
+        $registerquery = mysql_query("INSERT INTO Users (FirstName, LastName, Username, Password) VALUES('".$fname."','".$lname."','".$username."', '".$password."')");
+        if($registerquery)
+        {
+            echo "<h1>Success</h1>";
+            echo "<p>Your account was successfully created.</p>";
+        }
+        else
+        {
+            echo "<h1>Error</h1>";
+            echo "<p>Sorry, your registration failed. Please go back and try again.</p>";    
+        }       
+     }
 }
-
 ?>
