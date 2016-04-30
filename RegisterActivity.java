@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         final RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-        final String registerUrl = "http://capstoneusers.comlu.com//reg.php";
+        final String registerUrl = "http://capstoneusers.comlu.com/public_html/reg.php";
 
         /* creates fields for the user to input information */
 
@@ -48,24 +48,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-            
-                final Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 StringRequest rrequest = new StringRequest(Request.Method.POST, registerUrl, new Response.Listener<String>(){
                     @Override
-                    public void onResponse(String response)
-                    {
-                      if(response.contains(" success "))
-                        {
-                            RegisterActivity.this.startActivity(intent);
-                            //Log.d(response, "Server Response");
-                        }else{
-                            AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                            builder.setMessage("Register Failed)
-                                    .setNegativeButton("Retry", null)
-                                    .create()
-                                    .show();
-                                    Log.d(response, "Server Response");
-                        }
+                    public void onResponse(String response) {
 
                     }
                 }, new Response.ErrorListener() {
@@ -86,7 +71,17 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 };
                 queue.add(rrequest);
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                RegisterActivity.this.startActivity(intent);
             }
         });
     }
 }
+
+/*final String firstname = etFName.getText().toString();
+final String lastname = etLName.getText().toString();
+final String username = etUsername.getText().toString();
+final String password = etPassword.getText().toString();
+/* sends a registration request to the database */
+/* RegisterRequest registerRequest = new RegisterRequest(firstname, lastname, username, password, responseListener);
+queue.add(registerRequest);*/
