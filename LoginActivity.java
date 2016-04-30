@@ -57,18 +57,18 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response)
                     {
-                        if(response.contains(" success "))
+                        if(response == "success")
                         {
                             LoginActivity.this.startActivity(intent);
-                            //Log.d(response, "Server Response");
+                            //Log.v(response, "Server Response");
 
                         }else{
+                            Log.i(response, "Server Response");
                             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                             builder.setMessage("Login Failed: Invalid Credentials ")
                                     .setNegativeButton("Retry", null)
                                     .create()
                                     .show();
-                                    Log.d(response, "Server Response");
                         }
                     }
                 },
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                         params.put("username", etUsername.getText().toString());
                         params.put("password", etPassword.getText().toString());
                        //Log.d(params.toString(), "DEBUGGING params.put...");
-                       //Log.v(params.toString(), "VERBOSE params.put...");
+                       Log.v(params.toString(), "VERBOSE params.put...");
                         return params;
                     }
                 };
