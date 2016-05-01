@@ -1,34 +1,49 @@
-<?php 
+<?php
+if($_SERVER['REQUEST_METHOD']=='POST'){
+require 'dbconnect.php';
+registerUser();
+}
 
-include "dbconnect.php";
-
-if(!empty($_POST['FirstName']) && !empty($_POST['LastName'] && !empty($_POST['Username']) && !empty($_POST['Password']))
+function registerUser()
 {
-    $fname = mysql_real_escape_string($_POST['FirstName']);
-    $lanem = mysql_real_escape_string($_POST['LastName']);
-    $username = mysql_real_escape_string($_POST['Username']);
-    $password = md5(mysql_real_escape_string($_POST['Password']));
-     
-     $checkusername = mysql_query("SELECT * FROM Users WHERE Username = '".$username."'");
-      
-     if(mysql_num_rows($checkusername) == 1)
-     {
-        echo "<h1>Error</h1>";
-        echo "<p>Sorry, that username is taken. Please go back and try again.</p>";
-     }
-     else
-     {
-        $registerquery = mysql_query("INSERT INTO Users (FirstName, LastName, Username, Password) VALUES('".$fname."','".$lname."','".$username."', '".$password."')");
-        if($registerquery)
+	global $connect;
+    if($connect)
+    {
+	    $FirstName = $_POST["FirstName"];
+	    $LastName = $_POST["LastName"];
+	    $Username = $_POST["Username"];
+	    $Password = $_POST["Password"];
+        $response = array();
+
+        if(!empty($_POST["FirstName"]) && !empty($_POST["LastName"]) && !empty($_POST["Username"]) && !empty($_POST["Password"]))
         {
-            echo "<h1>Success</h1>";
-            echo "<p>Your account was successfully created.</p>";
-        }
-        else
-        {
-            echo "<h1>Error</h1>";
-            echo "<p>Sorry, your registration failed. Please go back and try again.</p>";    
-        }       
-     }
+
+		    $sql = "SELECT * FROM Users WHERE username='$username'";
+		    $check = mysqli_fetch_array(mysqli_query($connect,$sql));
+		    if(isset($check))
+                {
+			        echo 'username already exist';
+		        }
+                else
+                {				
+		        	$query = " Insert into Users(FirstName,LastName,Username,Password) values ('$FirstName','$LastName','$Username','$Password');";
+			        if(mysqli_query($connect,$sql))
+                        {
+			                	echo 'successfully registered';
+                                $response["success"] = true;
+			            }
+                        else
+                        {
+				                echo 'oops! Please try again!';
+                                $response["success"] = false;
+			            }
+		        }
+		mysqli_close($connect);
+	   }
+    }
+}
+else
+{
+    echo 'connection to database failed';
 }
 ?>
