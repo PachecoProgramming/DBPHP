@@ -1,5 +1,3 @@
-package com.example.anthony.capstoneapp3;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         final RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-        final String registerUrl = "http://capstoneusers.comlu.com/public_html/reg.php";
+        final String registerUrl = "http://capstoneusers.comlu.com/reg.php";
 
         /* creates fields for the user to input information */
 
@@ -60,13 +58,23 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 }){
                     @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map <String,String> params = new HashMap<String, String>();
-                        params.put("firstname", etFName.getText().toString());
-                        params.put("lastname", etLName.getText().toString());
-                        params.put("username", etUsername.getText().toString());
-                        params.put("password", etPassword.getText().toString());
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        if (etUsername.getText().toString() != " " && etPassword.getText().toString() != " " && etLName.getText().toString() != " " && etFName.getText().toString() != " ") {
+                            params.put("FirstName", etFName.getText().toString());
+                            params.put("LastName", etLName.getText().toString());
+                            params.put("Password", etPassword.getText().toString());
+                            params.put("Password", etPassword.getText().toString());
+                            Log.d(params.toString(), "DEBUGGING params.put...");
+                            Log.v(params.toString(), "VERBOSE params.put...");
+                        } else {
+                            AlertDialog.Builder buildme = new AlertDialog.Builder(RegisterActivity.this);
+                            buildme.setMessage("Please fill all fields ")
+                                    .setNegativeButton("Retry", null)
+                                    .create()
+                                    .show();
 
+                        }
                         return params;
                     }
                 };
@@ -77,11 +85,3 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 }
-
-/*final String firstname = etFName.getText().toString();
-final String lastname = etLName.getText().toString();
-final String username = etUsername.getText().toString();
-final String password = etPassword.getText().toString();
-/* sends a registration request to the database */
-/* RegisterRequest registerRequest = new RegisterRequest(firstname, lastname, username, password, responseListener);
-queue.add(registerRequest);*/
