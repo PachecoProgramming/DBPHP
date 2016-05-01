@@ -25,10 +25,10 @@ function loginUser()
                 $checkPWD = mysqli_fetch_array(mysqli_query($connect,$sqlPWD));
 	            if(isset($checkPWD))
 	            {
-            		$response["Success"] = true;
-		            echo json_encode('Successful Login');
-		            return $response["Success"];
-		            mysqli_close($connect);
+	            	$response["Success"] = true;
+			echo json_encode('Successful Login');
+			return $response["Success"];
+			mysqli_close($connect);
 
 	            }
 	            else
