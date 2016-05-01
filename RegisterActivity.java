@@ -63,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (etUsername.getText().toString() != " " && etPassword.getText().toString() != " " && etLName.getText().toString() != " " && etFName.getText().toString() != " ") {
                             params.put("FirstName", etFName.getText().toString());
                             params.put("LastName", etLName.getText().toString());
-                            params.put("Password", etPassword.getText().toString());
+                            params.put("Username", etUsername.getText().toString());
                             params.put("Password", etPassword.getText().toString());
                             Log.d(params.toString(), "DEBUGGING params.put...");
                             Log.v(params.toString(), "VERBOSE params.put...");
