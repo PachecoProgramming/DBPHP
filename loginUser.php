@@ -1,33 +1,59 @@
-<?php 
-
-include "dbconnect.php";
-
-if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username']))
-{
-    echo "<h1User already logged in</h1>";
+<?php
+if($_SERVER['REQUEST_METHOD']=='POST'){
+require 'dbconnect.php';
+loginUser();
 }
-elseif(!empty($_POST['Username']) && !empty($_POST['Password']))
+?>
+<?php
+function loginUser()
 {
-    $username = mysql_real_escape_string($_POST['Username']);
-    $password = md5(mysql_real_escape_string($_POST['Password']));
-     
-    $checklogin = mysql_query("SELECT * FROM Users WHERE Username = '".$username."' AND Password = '".$password."'");
-     
-    if(mysql_num_rows($checklogin) == 1)
+	global $connect;
+    if($connect)
     {
-        $row = mysql_fetch_array($checklogin);
-        $fname = $row['FirstName'];
-         
-        $_SESSION['Username'] = $username;
-        $_SESSION['Password'] = $password;
-        $_SESSION['LoggedIn'] = "Success";
-         
-        echo "<h1>Success</h1>";
+	    $Username = $_POST["Username"];
+	    $Password = $_POST["Password"];
+	    $response = array();
+	    $response["Success"] = false;
+
+        if(!empty($_POST["Username"]) || !empty($_POST["Username"]))
+        {
+	        $sqlUN = "SELECT * FROM Users WHERE Username= '$Username'";
+	        $checkUN = mysqli_fetch_array(mysqli_query($connect,$sqlUN));
+        	if(isset($checkUN))
+        	{
+                $sqlPWD = "SELECT * FROM Users WHERE Password= '$Password'";
+                $checkPWD = mysqli_fetch_array(mysqli_query($connect,$sqlPWD));
+	            if(isset($checkPWD))
+	            {
+            		$response["Success"] = true;
+		            echo json_encode('Successful Login');
+		            return $response["Success"];
+		            mysqli_close($connect);
+
+	            }
+	            else
+	            {
+	                echo json_encode('Bad Password');
+	                return $response["Success"];
+	            }
+        	}
+            else
+            {
+                echo json_encode('Bad Username');
+                return $response["Success"];
+                
+            }
+        }
+        else
+        {
+            echo json_encode('bad request');
+            return $response["Success"];
+        }
     }
     else
     {
-        echo "<h1>Error</h1>";
-        echo "<p>Sorry, your account could not be found.</p>";
+        echo json_encode('failed to connect to database');
+        return $response["Success"];
     }
 }
 ?>
