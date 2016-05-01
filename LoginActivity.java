@@ -1,5 +1,3 @@
-package com.example.anthony.capstoneapp3;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         final RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-        final String loginUrl = "http://capstoneusers.comlu.com//loginUser.php";
+        final String loginUrl = "http://capstoneusers.comlu.com/loginUser.php";
 
         final EditText etUsername = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -78,13 +76,25 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         })
                 {
-                    @Override
+                   @Override
                     public Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("username", etUsername.getText().toString());
-                        params.put("password", etPassword.getText().toString());
-                       //Log.d(params.toString(), "DEBUGGING params.put...");
-                       Log.v(params.toString(), "VERBOSE params.put...");
+                        if(etUsername.getText().toString() != " " &&  etPassword.getText().toString() != " ")
+                        {
+                            params.put("Username", etUsername.getText().toString());
+                            params.put("Password", etPassword.getText().toString());
+                            Log.d(params.toString(), "DEBUGGING params.put...");
+                            Log.v(params.toString(), "VERBOSE params.put...");
+                        }
+                        else
+                        {
+                            AlertDialog.Builder buildme  = new AlertDialog.Builder(LoginActivity.this);
+                            buildme.setMessage("Please fill all fields ")
+                                    .setNegativeButton("Retry", null)
+                                    .create()
+                                    .show();
+                            
+                        }
                         return params;
                     }
                 };
