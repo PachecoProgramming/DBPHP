@@ -37,7 +37,7 @@ function registerUser()
                         	}
                         	else
                         	{
-                        		echo json_encode('oops! Please try again!');
+                        		echo json_encode('bad query');
                                 	$response["success"] = false;
                                 	return $response["Success"];
                         		
