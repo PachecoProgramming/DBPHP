@@ -1,58 +1,75 @@
 <?php
-if($_SERVER['REQUEST_METHOD']=='POST'){
-require 'dbconnect.php';
-registerUser();
-}
-?>
-<?php
-function registerUser()
-{
-	global $connect;
-    	if($connect)
-    	{
-	    $FirstName = $_POST["FirstName"];
-	    $LastName = $_POST["LastName"];
-	    $Username = $_POST["Username"];
-	    $Password = $_POST["Password"];
-	    $response = array();
-	    $response["Success"] = false;
+  header('Content-Type: application/json');
 
-        	if(!empty($_POST["FirstName"]) && !empty($_POST["LastName"]) && !empty($_POST["Username"]) && !empty($_POST["Password"]))
-        	{
-		    $sql = "SELECT * FROM Users WHERE username='$username'";
-		    $check = mysqli_fetch_array(mysqli_query($connect,$sql));
-		    if(isset($check))
-                	{
-			        echo json_encode('username already exist');
-			        return $response["Success"];
-		        }
-                	else
-                	{				
-		        	$query = " Insert into Users(FirstName,LastName,Username,Password) values ('$FirstName','$LastName','$Username','$Password');";
-			        if(mysqli_query($connect,$sql))
-                        	{
-                        		echo json_encode('successfully registered');
-                                	$response["success"] = true;
-                                	return $response["Success"];
-                        	}
-                        	else
-                        	{
-                        		echo json_encode('bad query');
-                                	$response["success"] = false;
-                                	return $response["Success"];
-                        		
-                        	}
-		        }
-				mysqli_close($connect);
-	   	}
-	   	else
-	   	{
-	   		echo json_encode('Bad request');
-	   	}
-    	}
-    	else
-    	{
-    		echo json_encode('connection to database failed');
-    	}
-}
+  $response = array();
+
+$mysqli = new mysqli("myhost", "myusername", "mypassword", "mydatabase");
+
+  /* check connection */
+  if (mysqli_connect_errno()) {
+
+      $response["DCE"] = mysqli_connect_error();
+      echo json_encode($response);
+      exit();
+
+  }
+
+  $FirstName = (string)$_POST["FirstName"];
+  $LastName  = (string)$_POST["LastName"];
+  $Username  = (string)$_POST["Username"];
+  $Password  = (string)$_POST["Password"];
+
+  if ($FirstName && $LastName && $Username && $Password) {
+
+    /* create a prepared statement */
+    if ($stmt = $mysqli->prepare("SELECT Username FROM Users WHERE Username=?")) {
+
+      /* bind parameters for markers */
+      if ($stmt->bind_param("s", $Username)) {
+
+        /* execute query */
+        if ($stmt->execute()) {
+
+          $result = $stmt->get_result();
+
+          if ($row = $result->fetch_assoc()) {
+
+            $response["UAE"] = "User already exists";
+            $result->free();
+
+          } else {
+
+            $result->free();
+            $stmt->close();
+
+            if ($stmt = $mysqli->prepare("INSERT INTO Users (FirstName,LastName,Username,Password) values (?,?,?,?)")) {
+
+              if ($stmt->bind_param("ssss", $FirstName, $LastName, $Username, $Password)) {
+
+                if ($stmt->execute()) $response["SR"] = "Successful registration";
+
+                else $response["QE"] = "Query 2 did not execute properly";
+
+              } else $response["QE"] = "Query 2 parameters could not be bound";
+
+            } else $response["QE"] = "Query 2 could not be prepared";
+
+          }
+
+        } else $response["QE"] = "Query 1 did not execute properly";
+
+      } else $response["QE"] = "Query 1 parameters could not be bound";
+
+      /* close statement */
+      $stmt->close();
+
+    } else $response["QE"] = "Query 1 could not be prepared";
+
+  } else{ $response["BR"] = "Bad POST request parameters";}
+
+  /* close connection */
+  $mysqli->close();
+  echo json_encode($response);
+
 ?>
+
