@@ -3,7 +3,7 @@
 
   $response = array();
 
-  $mysqli = new mysqli("myhost", "myusername", "mypassword", "mydatabase");
+  $mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com", "Muser", "mpassword", "MyDB");
 
   /* check connection */
   if (mysqli_connect_errno()) 
@@ -12,62 +12,39 @@
       echo json_encode($response);
       exit();
   }
-  	$Username  = (string)$_POST["Username"];
-  	$Password  = (string)$_POST["Password"];
+  	if(isset($_POST["Username"]) && isset($_POST["Password"]))
+	{	$Username  = (string)$_POST["Username"];
+		$Password  = (string)$_POST["Password"];
   	if ($Username && $Password)
   	{
-    		/* create a prepared statement */
-    		if ($stmt = $mysqli->prepare("SELECT Username FROM Users WHERE Username=?")) 
-    		{
-      			/* bind parameters for markers */
-      			if ($stmt->bind_param("s", $Username)) 
-      			{
-        			/* execute query */
-        			if ($stmt->execute()) 
-        			{
-          				$result = $stmt->get_result();
-          				if ($row = $result->fetch_assoc()) 
-          				{
-            					$response["UAE"] = "User already exists";
-            					$result->free();
-          				} 
-          				else 
-          				{
-            					$result->free();
-            					$stmt->close();	
-            					if ($stmt = $mysqli->prepare("SELECT * FROM Users Username,Password) values (?,?)")) 
-            					{
-              						if ($stmt->bind_param("ss", $Username, $Password)) 
-              						{
-                						if ($stmt->execute()) $response["SL"] = "Successful login";
-                							else $response["QE"] = "Query 2 did not execute properly";
-              						} 
-              						else 
-              							$response["QE"] = "Query 2 parameters could not be bound";
-            					} 
-            					else 
-            						$response["QE"] = "Query 2 could not be prepared";
-          				}
-        			} 
-        			else 
-        				$response["QE"] = "Query  did not execute properly";
-			} 
-			else 
-				$response["QE"] = "Query 1 parameters could not be bound";
+  		if ($stmt = $mysqli->prepare("SELECT * FROM users Username,Password) values (?,?)"))
+  		{
+  			if ($stmt->bind_param("ss", $Username, $Password))
+  			{
+  				if ($stmt->execute())
+  				{
+  					$response["SL"] = "Successful login";
+  					
+  				}
+  				else {
+  					$response["QE"] = "Query did not execute properly";
+  					
+  				}
+              		} 
+              		else 
+              			$response["QE"] = "Query parameters could not be bound";
+            	} 
+            	else
+            		$response["QE"] = "Query could not be prepared";
+		
       		/* close statement */
       		$stmt->close();
-    		} 
-    		else 
-    			$response["QE"] = "Query 1 could not be prepared";
-  	} 
-  	else 
-  	{
-  		$response["BR"] = "Bad POST request parameters";
-  	}
+  	 } else $response["BR"] = "Bad POST request parameters";
+    
+  } else $response["BR"] = "Bad POST request parameters";
 
   /* close connection */
   $mysqli->close();
   echo json_encode($response);
 
 ?>
-
