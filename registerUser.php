@@ -3,7 +3,7 @@
 
   $response = array();
 
-$mysqli = new mysqli("myhost", "myusername", "mypassword", "mydatabase");
+$mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com:3306", "Muser", "mpassword", "ThisInstance");
 
   /* check connection */
   if (mysqli_connect_errno()) {
@@ -14,15 +14,17 @@ $mysqli = new mysqli("myhost", "myusername", "mypassword", "mydatabase");
 
   }
 
-  $FirstName = (string)$_POST["FirstName"];
-  $LastName  = (string)$_POST["LastName"];
-  $Username  = (string)$_POST["Username"];
-  $Password  = (string)$_POST["Password"];
+  if(isset($_POST["FirstName"]) && isset($_POST["LastName"]) && isset($_POST["Username"]) && isset($_POST["Password"]))
+	{
+		$FirstName = (string)$_POST["FirstName"];
+		$LastName  = (string)$_POST["LastName"];
+		$Username  = (string)$_POST["Username"];
+		$Password  = (string)$_POST["Password"];
+		if ($FirstName && $LastName && $Username && $Password) 
+		{
 
-  if ($FirstName && $LastName && $Username && $Password) {
-
-    /* create a prepared statement */
-    if ($stmt = $mysqli->prepare("SELECT Username FROM Users WHERE Username=?")) {
+      /* create a prepared statement */
+      if ($stmt = $mysqli->prepare("SELECT Username FROM users WHERE Username=?")) {
 
       /* bind parameters for markers */
       if ($stmt->bind_param("s", $Username)) {
@@ -66,6 +68,8 @@ $mysqli = new mysqli("myhost", "myusername", "mypassword", "mydatabase");
     } else $response["QE"] = "Query 1 could not be prepared";
 
   } else{ $response["BR"] = "Bad POST request parameters";}
+	  
+	}
 
   /* close connection */
   $mysqli->close();
