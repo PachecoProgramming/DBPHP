@@ -3,7 +3,7 @@
 
   $response = array();
 
-$mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com:3306", "Muser", "mpassword", "ThisInstance");
+$mysqli = new mysqli("hostname", "myuser", "mypassword", "databasename");
 
   /* check connection */
   if (mysqli_connect_errno()) {
@@ -44,9 +44,9 @@ $mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com:3306
             $result->free();
             $stmt->close();
 
-            if ($stmt = $mysqli->prepare("INSERT INTO Users (FirstName,LastName,Username,Password) values (?,?,?,?)")) {
+            if ($stmt = $mysqli->prepare("INSERT INTO Users (Username,Password,FirstName,LastName) values (?,?,?,?)")) {
 
-              if ($stmt->bind_param("ssss", $FirstName, $LastName, $Username, $Password)) {
+              if ($stmt->bind_param("ssss", $Username, $Password, $FirstName, $LastName)) {
 
                 if ($stmt->execute()) $response["SR"] = "Successful registration";
 
@@ -69,7 +69,8 @@ $mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com:3306
 
   } else{ $response["BR"] = "Bad POST request parameters";}
 	  
-	}
+	} else
+		$response["BR"] = "Bad POST request parameters";
 
   /* close connection */
   $mysqli->close();
