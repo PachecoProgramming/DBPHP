@@ -3,7 +3,7 @@
 
   $response = array();
 
-  $mysqli = new mysqli("thisinstance.cy3jxhjvzmqz.us-east-1.rds.amazonaws.com", "Muser", "mpassword", "MyDB");
+  $mysqli = new mysqli("hostname", "myuser", "mypassword", "databasename");
 
   /* check connection */
   if (mysqli_connect_errno()) 
